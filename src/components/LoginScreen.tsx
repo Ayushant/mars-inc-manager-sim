@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { Building2, Users, LogIn, UserPlus } from 'lucide-react';
+import { Building2, Users, LogIn, UserPlus, Shield } from 'lucide-react';
 
 export const LoginScreen: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -11,7 +11,7 @@ export const LoginScreen: React.FC = () => {
     password: '',
     fullName: '',
     collegeName: '',
-    role: 'student' as 'student' | 'admin'
+    role: 'student' as 'student' | 'admin' | 'super_admin'
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -34,7 +34,9 @@ export const LoginScreen: React.FC = () => {
       }
 
       if (success) {
-        navigate(formData.role === 'admin' ? '/admin' : '/student');
+        const route = formData.role === 'super_admin' ? '/super-admin' : 
+                      formData.role === 'admin' ? '/admin' : '/student';
+        navigate(route);
       } else {
         setError('Authentication failed. Please try again.');
       }
@@ -71,7 +73,7 @@ export const LoginScreen: React.FC = () => {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Login as
               </label>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-2">
                 <button
                   type="button"
                   onClick={() => setFormData({...formData, role: 'student'})}
@@ -81,8 +83,8 @@ export const LoginScreen: React.FC = () => {
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
-                  <Users className="w-5 h-5 mx-auto mb-1" />
-                  <div className="text-sm font-medium">Student</div>
+                  <Users className="w-4 h-4 mx-auto mb-1" />
+                  <div className="text-xs font-medium">Student</div>
                 </button>
                 <button
                   type="button"
@@ -93,8 +95,20 @@ export const LoginScreen: React.FC = () => {
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
-                  <Building2 className="w-5 h-5 mx-auto mb-1" />
-                  <div className="text-sm font-medium">Admin</div>
+                  <Building2 className="w-4 h-4 mx-auto mb-1" />
+                  <div className="text-xs font-medium">Admin</div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFormData({...formData, role: 'super_admin'})}
+                  className={`p-3 rounded-lg border-2 transition-colors ${
+                    formData.role === 'super_admin'
+                      ? 'border-orange-600 bg-orange-50 text-orange-700'
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  <Shield className="w-4 h-4 mx-auto mb-1" />
+                  <div className="text-xs font-medium">Super</div>
                 </button>
               </div>
             </div>

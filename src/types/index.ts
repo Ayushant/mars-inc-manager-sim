@@ -2,7 +2,7 @@
 export interface User {
   id: string;
   email: string;
-  role: 'student' | 'admin';
+  role: 'student' | 'admin' | 'super_admin';
   full_name?: string;
   college_name?: string;
 }
@@ -51,4 +51,32 @@ export interface AdminAnalytics {
   activeSessions: number;
   completedSessions: number;
   averageScore: number;
+}
+
+export interface Quiz {
+  id: string;
+  title: string;
+  description: string;
+  duration: number; // in minutes
+  questions: QuizQuestion[];
+  created_at: string;
+  created_by: string;
+  is_active: boolean;
+}
+
+export interface QuizQuestion {
+  id: string;
+  question: string;
+  options: string[];
+  correct_answer: number;
+  points: number;
+}
+
+export interface License {
+  id: string;
+  college_name: string;
+  max_students: number;
+  current_students: number;
+  expires_at: string;
+  is_active: boolean;
 }

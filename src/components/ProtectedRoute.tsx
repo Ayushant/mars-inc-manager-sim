@@ -5,7 +5,7 @@ import { Navigate } from 'react-router-dom';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  role?: 'student' | 'admin';
+  role?: 'student' | 'admin' | 'super_admin';
 }
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, role }) => {
@@ -27,7 +27,9 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, role }
   }
 
   if (role && user.role !== role) {
-    return <Navigate to={user.role === 'admin' ? '/admin' : '/student'} replace />;
+    const redirectPath = user.role === 'super_admin' ? '/super-admin' : 
+                         user.role === 'admin' ? '/admin' : '/student';
+    return <Navigate to={redirectPath} replace />;
   }
 
   return <>{children}</>;

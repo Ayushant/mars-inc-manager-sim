@@ -5,6 +5,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { LoginScreen } from './components/LoginScreen';
 import { StudentDashboard } from './components/StudentDashboard';
 import { AdminDashboard } from './components/AdminDashboard';
+import { SuperAdminDashboard } from './components/SuperAdminDashboard';
 import { SimulationGame } from './components/SimulationGame';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
@@ -23,6 +24,11 @@ function App() {
             <Route path="/admin" element={
               <ProtectedRoute role="admin">
                 <AdminDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/super-admin" element={
+              <ProtectedRoute role="super_admin">
+                <SuperAdminDashboard />
               </ProtectedRoute>
             } />
             <Route path="/simulation/:sessionId" element={
