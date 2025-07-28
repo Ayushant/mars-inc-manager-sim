@@ -54,7 +54,7 @@ export const DecisionScreen: React.FC<DecisionScreenProps> = ({
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-800">
-                  Decision {decision.number} of 3
+                  Decision {decision.number} of 8
                 </h1>
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Calendar className="w-4 h-4" />
@@ -73,12 +73,12 @@ export const DecisionScreen: React.FC<DecisionScreenProps> = ({
           <div className="mb-8">
             <div className="flex justify-between text-sm text-gray-600 mb-2">
               <span>Progress</span>
-              <span>{decision.number}/3 decisions</span>
+              <span>{decision.number}/8 decisions</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
               <div 
                 className="bg-orange-600 h-2 rounded-full transition-all duration-300"
-                style={{ width: `${(decision.number / 3) * 100}%` }}
+                style={{ width: `${(decision.number / 8) * 100}%` }}
               />
             </div>
           </div>

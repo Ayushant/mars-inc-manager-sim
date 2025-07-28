@@ -74,8 +74,8 @@ export const SimulationGame: React.FC = () => {
     // Calculate total score
     const totalScore = updatedDecisions.reduce((sum, d) => sum + d.score, 0);
 
-    // Update session
-    const isCompleted = currentDecision >= 3;
+    // Update session - changed from 3 to 8 decisions
+    const isCompleted = currentDecision >= 8;
     const updatedSession: SimulationSession = {
       ...session,
       current_decision: currentDecision + 1,
