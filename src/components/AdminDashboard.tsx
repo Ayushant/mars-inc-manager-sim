@@ -1,8 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { Users, Activity, CheckCircle, TrendingUp, LogOut, Download } from 'lucide-react';
+import { Users, Activity, CheckCircle, TrendingUp, LogOut, Download, Plus } from 'lucide-react';
 import { AdminAnalytics, SimulationSession } from '../types';
+import { AddStudentDialog } from './AddStudentDialog';
 
 export const AdminDashboard: React.FC = () => {
   const { user, logout } = useAuth();
@@ -13,6 +14,7 @@ export const AdminDashboard: React.FC = () => {
     averageScore: 0
   });
   const [recentSessions, setRecentSessions] = useState<SimulationSession[]>([]);
+  const [isAddStudentOpen, setIsAddStudentOpen] = useState(false);
 
   useEffect(() => {
     loadAnalytics();
@@ -102,6 +104,13 @@ export const AdminDashboard: React.FC = () => {
             </div>
             <div className="flex items-center gap-4">
               <button
+                onClick={() => setIsAddStudentOpen(true)}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center gap-2"
+              >
+                <Plus className="w-4 h-4" />
+                Add Student
+              </button>
+              <button
                 onClick={exportData}
                 className="bg-orange-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-orange-700 transition-colors flex items-center gap-2"
               >
@@ -177,27 +186,6 @@ export const AdminDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Performance Distribution */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
-          <h2 className="text-xl font-semibold mb-6">Performance Distribution</h2>
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-            {[
-              { range: '90-100', count: 15, color: 'bg-green-500' },
-              { range: '80-89', count: 28, color: 'bg-blue-500' },
-              { range: '70-79', count: 32, color: 'bg-orange-500' },
-              { range: '60-69', count: 12, color: 'bg-yellow-500' },
-              { range: '0-59', count: 2, color: 'bg-red-500' }
-            ].map((item, index) => (
-              <div key={index} className="text-center">
-                <div className={`${item.color} h-24 rounded-lg flex items-end justify-center mb-2`}>
-                  <div className="text-white font-bold mb-2">{item.count}</div>
-                </div>
-                <div className="text-sm font-medium text-gray-600">{item.range}%</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
         {/* Recent Sessions Table */}
         <div className="bg-white rounded-xl shadow-lg p-6">
           <div className="flex justify-between items-center mb-6">
@@ -267,6 +255,12 @@ export const AdminDashboard: React.FC = () => {
             </table>
           </div>
         </div>
+
+        {/* Add Student Dialog */}
+        <AddStudentDialog 
+          open={isAddStudentOpen} 
+          onOpenChange={setIsAddStudentOpen} 
+        />
       </div>
     </div>
   );
