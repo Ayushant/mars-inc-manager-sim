@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { 
@@ -19,10 +18,12 @@ import {
   Building2
 } from 'lucide-react';
 import { License, Quiz } from '../types';
+import { AddLicenseDialog } from './AddLicenseDialog';
 
 export const SuperAdminDashboard: React.FC = () => {
   const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
+  const [isAddLicenseOpen, setIsAddLicenseOpen] = useState(false);
 
   // Mock data
   const [licenses] = useState<License[]>([
@@ -157,7 +158,10 @@ export const SuperAdminDashboard: React.FC = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-semibold">License Management</h3>
-        <button className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors flex items-center gap-2">
+        <button 
+          onClick={() => setIsAddLicenseOpen(true)}
+          className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors flex items-center gap-2"
+        >
           <Plus className="w-4 h-4" />
           Add License
         </button>
@@ -372,6 +376,12 @@ export const SuperAdminDashboard: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Add License Dialog */}
+      <AddLicenseDialog 
+        open={isAddLicenseOpen} 
+        onOpenChange={setIsAddLicenseOpen} 
+      />
     </div>
   );
 };
