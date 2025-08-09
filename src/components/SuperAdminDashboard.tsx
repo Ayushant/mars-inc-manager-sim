@@ -25,8 +25,8 @@ export const SuperAdminDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [isAddLicenseOpen, setIsAddLicenseOpen] = useState(false);
 
-  // Mock data
-  const [licenses] = useState<License[]>([
+  // Mock data - now using state so it can be updated
+  const [licenses, setLicenses] = useState<License[]>([
     {
       id: '1',
       college_name: 'MIT',
@@ -73,6 +73,26 @@ export const SuperAdminDashboard: React.FC = () => {
     totalStudents: licenses.reduce((sum, l) => sum + l.current_students, 0),
     activeQuizzes: quizzes.filter(q => q.is_active).length,
     systemUptime: '99.9%'
+  };
+
+  const handleAddLicense = (licenseData: {
+    collegeName: string;
+    email: string;
+    password: string;
+    totalLicenses: string;
+    expiryDate: Date | undefined;
+  }) => {
+    const newLicense: License = {
+      id: Date.now().toString(),
+      college_name: licenseData.collegeName,
+      max_students: parseInt(licenseData.totalLicenses),
+      current_students: 0,
+      expires_at: licenseData.expiryDate?.toISOString().split('T')[0] || '2024-12-31',
+      is_active: true
+    };
+
+    setLicenses(prev => [...prev, newLicense]);
+    console.log('New license added:', newLicense);
   };
 
   const renderOverview = () => (
@@ -380,7 +400,8 @@ export const SuperAdminDashboard: React.FC = () => {
       {/* Add License Dialog */}
       <AddLicenseDialog 
         open={isAddLicenseOpen} 
-        onOpenChange={setIsAddLicenseOpen} 
+        onOpenChange={setIsAddLicenseOpen}
+        onAddLicense={handleAddLicense}
       />
     </div>
   );

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -13,9 +12,20 @@ import { cn } from '@/lib/utils';
 interface AddLicenseDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onAddLicense?: (licenseData: {
+    collegeName: string;
+    email: string;
+    password: string;
+    totalLicenses: string;
+    expiryDate: Date | undefined;
+  }) => void;
 }
 
-export const AddLicenseDialog: React.FC<AddLicenseDialogProps> = ({ open, onOpenChange }) => {
+export const AddLicenseDialog: React.FC<AddLicenseDialogProps> = ({ 
+  open, 
+  onOpenChange, 
+  onAddLicense 
+}) => {
   const [formData, setFormData] = useState({
     collegeName: '',
     email: '',
@@ -41,7 +51,11 @@ export const AddLicenseDialog: React.FC<AddLicenseDialogProps> = ({ open, onOpen
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('New License Data:', formData);
-    // Here you would typically send the data to your backend
+    
+    // Call the callback function if provided
+    if (onAddLicense) {
+      onAddLicense(formData);
+    }
     
     // Reset form and close dialog
     setFormData({

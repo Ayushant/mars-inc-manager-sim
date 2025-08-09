@@ -1,9 +1,15 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Users, Activity, CheckCircle, TrendingUp, LogOut, Download, Plus, Play, Square } from 'lucide-react';
 import { AdminAnalytics, SimulationSession } from '../types';
 import { AddStudentDialog } from './AddStudentDialog';
+
+interface Student {
+  id: string;
+  email: string;
+  full_name: string;
+  created_at: string;
+}
 
 export const AdminDashboard: React.FC = () => {
   const { user, logout } = useAuth();
@@ -14,17 +20,19 @@ export const AdminDashboard: React.FC = () => {
     averageScore: 0
   });
   const [recentSessions, setRecentSessions] = useState<SimulationSession[]>([]);
+  const [students, setStudents] = useState<Student[]>([]);
   const [isAddStudentOpen, setIsAddStudentOpen] = useState(false);
   const [isUniversalQuizActive, setIsUniversalQuizActive] = useState(false);
 
   useEffect(() => {
     loadAnalytics();
+    loadStudents();
   }, []);
 
   const loadAnalytics = () => {
-    // Simulate analytics data
+    // Simulate analytics data - will be updated when students are added
     const mockAnalytics: AdminAnalytics = {
-      totalStudents: 156,
+      totalStudents: students.length,
       activeSessions: 23,
       completedSessions: 89,
       averageScore: 76.5
@@ -64,6 +72,48 @@ export const AdminDashboard: React.FC = () => {
       }
     ];
     setRecentSessions(mockSessions);
+  };
+
+  const loadStudents = () => {
+    // Initialize with some mock students
+    const mockStudents: Student[] = [
+      {
+        id: '1',
+        email: 'john.doe@university.edu',
+        full_name: 'John Doe',
+        created_at: new Date().toISOString()
+      },
+      {
+        id: '2',
+        email: 'jane.smith@university.edu',
+        full_name: 'Jane Smith',
+        created_at: new Date().toISOString()
+      }
+    ];
+    setStudents(mockStudents);
+  };
+
+  const handleAddStudent = (studentData: {
+    email: string;
+    password: string;
+    pass: string;
+  }) => {
+    const newStudent: Student = {
+      id: Date.now().toString(),
+      email: studentData.email,
+      full_name: studentData.email.split('@')[0].replace('.', ' ').replace(/\b\w/g, l => l.toUpperCase()),
+      created_at: new Date().toISOString()
+    };
+
+    setStudents(prev => [...prev, newStudent]);
+    
+    // Update analytics to reflect new student count
+    setAnalytics(prev => ({
+      ...prev,
+      totalStudents: prev.totalStudents + 1
+    }));
+    
+    console.log('New student added:', newStudent);
   };
 
   const exportData = () => {
@@ -171,6 +221,30 @@ export const AdminDashboard: React.FC = () => {
                 Stop Quiz for All
               </button>
             </div>
+          </div>
+        </div>
+
+        {/* Students List Section */}
+        <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-semibold">Students ({students.length})</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {students.map((student) => (
+              <div key={student.id} className="bg-gray-50 p-4 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
+                    <span className="text-orange-600 font-semibold text-sm">
+                      {student.full_name.split(' ').map(n => n[0]).join('')}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">{student.full_name}</p>
+                    <p className="text-sm text-gray-600">{student.email}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
         
@@ -321,7 +395,8 @@ export const AdminDashboard: React.FC = () => {
         {/* Add Student Dialog */}
         <AddStudentDialog 
           open={isAddStudentOpen} 
-          onOpenChange={setIsAddStudentOpen} 
+          onOpenChange={setIsAddStudentOpen}
+          onAddStudent={handleAddStudent}
         />
       </div>
     </div>

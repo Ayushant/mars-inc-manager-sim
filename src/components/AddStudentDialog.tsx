@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { Button } from './ui/button';
@@ -9,11 +8,17 @@ import { UserPlus } from 'lucide-react';
 interface AddStudentDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onAddStudent?: (studentData: {
+    email: string;
+    password: string;
+    pass: string;
+  }) => void;
 }
 
 export const AddStudentDialog: React.FC<AddStudentDialogProps> = ({ 
   open, 
-  onOpenChange 
+  onOpenChange,
+  onAddStudent
 }) => {
   const [formData, setFormData] = useState({
     email: '',
@@ -31,6 +36,11 @@ export const AddStudentDialog: React.FC<AddStudentDialogProps> = ({
   const handleAddStudent = () => {
     // Handle student creation logic here
     console.log('Adding student:', formData);
+    
+    // Call the callback function if provided
+    if (onAddStudent) {
+      onAddStudent(formData);
+    }
     
     // Reset form and close dialog
     setFormData({ email: '', password: '', pass: '' });
