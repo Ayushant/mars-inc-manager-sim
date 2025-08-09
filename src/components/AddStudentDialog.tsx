@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
-import { Play, Square, UserPlus } from 'lucide-react';
+import { UserPlus } from 'lucide-react';
 
 interface AddStudentDialogProps {
   open: boolean;
@@ -20,7 +20,6 @@ export const AddStudentDialog: React.FC<AddStudentDialogProps> = ({
     password: '',
     pass: ''
   });
-  const [isQuizActive, setIsQuizActive] = useState(false);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
@@ -36,16 +35,6 @@ export const AddStudentDialog: React.FC<AddStudentDialogProps> = ({
     // Reset form and close dialog
     setFormData({ email: '', password: '', pass: '' });
     onOpenChange(false);
-  };
-
-  const handleStartQuiz = () => {
-    console.log('Starting quiz for student');
-    setIsQuizActive(true);
-  };
-
-  const handleStopQuiz = () => {
-    console.log('Stopping quiz for student');
-    setIsQuizActive(false);
   };
 
   return (
@@ -93,29 +82,7 @@ export const AddStudentDialog: React.FC<AddStudentDialogProps> = ({
           </div>
         </div>
         
-        <div className="flex flex-col gap-3 pt-4">
-          {/* Quiz Control Buttons */}
-          <div className="flex gap-2">
-            <Button
-              onClick={handleStartQuiz}
-              disabled={isQuizActive}
-              className="flex-1 bg-green-600 hover:bg-green-700"
-            >
-              <Play className="w-4 h-4 mr-2" />
-              Start Quiz
-            </Button>
-            <Button
-              onClick={handleStopQuiz}
-              disabled={!isQuizActive}
-              variant="destructive"
-              className="flex-1"
-            >
-              <Square className="w-4 h-4 mr-2" />
-              Stop Quiz
-            </Button>
-          </div>
-          
-          {/* Add Student Button */}
+        <div className="flex justify-end pt-4">
           <Button 
             onClick={handleAddStudent}
             className="w-full"

@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { Users, Activity, CheckCircle, TrendingUp, LogOut, Download, Plus } from 'lucide-react';
+import { Users, Activity, CheckCircle, TrendingUp, LogOut, Download, Plus, Play, Square } from 'lucide-react';
 import { AdminAnalytics, SimulationSession } from '../types';
 import { AddStudentDialog } from './AddStudentDialog';
 
@@ -15,6 +15,7 @@ export const AdminDashboard: React.FC = () => {
   });
   const [recentSessions, setRecentSessions] = useState<SimulationSession[]>([]);
   const [isAddStudentOpen, setIsAddStudentOpen] = useState(false);
+  const [isUniversalQuizActive, setIsUniversalQuizActive] = useState(false);
 
   useEffect(() => {
     loadAnalytics();
@@ -30,7 +31,6 @@ export const AdminDashboard: React.FC = () => {
     };
     setAnalytics(mockAnalytics);
 
-    // Mock recent sessions data
     const mockSessions: SimulationSession[] = [
       {
         id: '1',
@@ -92,6 +92,24 @@ export const AdminDashboard: React.FC = () => {
     window.URL.revokeObjectURL(url);
   };
 
+  const handleUniversalStartQuiz = () => {
+    console.log('Starting quiz for all students');
+    setIsUniversalQuizActive(true);
+  };
+
+  const handleUniversalStopQuiz = () => {
+    console.log('Stopping quiz for all students');
+    setIsUniversalQuizActive(false);
+  };
+
+  const handleStudentStartQuiz = (studentId: string) => {
+    console.log('Starting quiz for student:', studentId);
+  };
+
+  const handleStudentStopQuiz = (studentId: string) => {
+    console.log('Stopping quiz for student:', studentId);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
@@ -126,6 +144,31 @@ export const AdminDashboard: React.FC = () => {
                 className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
               >
                 <LogOut className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Universal Quiz Controls */}
+        <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-gray-900">Universal Quiz Control</h2>
+            <div className="flex gap-3">
+              <button
+                onClick={handleUniversalStartQuiz}
+                disabled={isUniversalQuizActive}
+                className="bg-green-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-green-700 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Play className="w-4 h-4" />
+                Start Quiz for All
+              </button>
+              <button
+                onClick={handleUniversalStopQuiz}
+                disabled={!isUniversalQuizActive}
+                className="bg-red-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-red-700 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Square className="w-4 h-4" />
+                Stop Quiz for All
               </button>
             </div>
           </div>
@@ -204,6 +247,7 @@ export const AdminDashboard: React.FC = () => {
                   <th className="text-left p-4 font-semibold text-gray-700">Score</th>
                   <th className="text-left p-4 font-semibold text-gray-700">Progress</th>
                   <th className="text-left p-4 font-semibold text-gray-700">Started</th>
+                  <th className="text-left p-4 font-semibold text-gray-700">Quiz Control</th>
                 </tr>
               </thead>
               <tbody>
@@ -238,16 +282,34 @@ export const AdminDashboard: React.FC = () => {
                         <div className="w-24 bg-gray-200 rounded-full h-2">
                           <div 
                             className="bg-orange-600 h-2 rounded-full"
-                            style={{ width: `${(session.current_decision / 3) * 100}%` }}
+                            style={{ width: `${(session.current_decision / 8) * 100}%` }}
                           />
                         </div>
                         <span className="text-sm text-gray-600">
-                          {session.current_decision}/3
+                          {session.current_decision}/8
                         </span>
                       </div>
                     </td>
                     <td className="p-4 text-gray-600">
                       {new Date(session.start_time).toLocaleDateString()}
+                    </td>
+                    <td className="p-4">
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleStudentStartQuiz(session.user_id)}
+                          className="bg-green-500 text-white px-3 py-1 rounded text-xs hover:bg-green-600 transition-colors flex items-center gap-1"
+                        >
+                          <Play className="w-3 h-3" />
+                          Start
+                        </button>
+                        <button
+                          onClick={() => handleStudentStopQuiz(session.user_id)}
+                          className="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600 transition-colors flex items-center gap-1"
+                        >
+                          <Square className="w-3 h-3" />
+                          Stop
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
