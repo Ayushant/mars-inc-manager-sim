@@ -2,21 +2,18 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { Building2, Users, LogIn, UserPlus, Shield } from 'lucide-react';
+import { Building2, Users, LogIn } from 'lucide-react';
 
 export const LoginScreen: React.FC = () => {
-  const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    fullName: '',
-    collegeName: '',
-    role: 'student' as 'student' | 'admin' | 'super_admin'
+    role: 'student' as 'student' | 'admin'
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const { login, register } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -25,20 +22,22 @@ export const LoginScreen: React.FC = () => {
     setError('');
 
     try {
-      let success = false;
-      
-      if (isLogin) {
-        success = await login(formData.email, formData.password, formData.role);
+      // Check for super admin credentials
+      if (formData.email === 'admin@ed.com' && formData.password === '232354') {
+        const success = await login(formData.email, formData.password, 'super_admin');
+        if (success) {
+          navigate('/super-admin');
+        } else {
+          setError('Authentication failed. Please try again.');
+        }
       } else {
-        success = await register(formData.email, formData.password, formData.fullName, formData.collegeName);
-      }
-
-      if (success) {
-        const route = formData.role === 'super_admin' ? '/super-admin' : 
-                      formData.role === 'admin' ? '/admin' : '/student';
-        navigate(route);
-      } else {
-        setError('Authentication failed. Please try again.');
+        const success = await login(formData.email, formData.password, formData.role);
+        if (success) {
+          const route = formData.role === 'admin' ? '/admin' : '/student';
+          navigate(route);
+        } else {
+          setError('Authentication failed. Please try again.');
+        }
       }
     } catch (err) {
       setError('An error occurred. Please try again.');
@@ -67,52 +66,38 @@ export const LoginScreen: React.FC = () => {
             </div>
           )}
 
-          {/* Role Selection for Login */}
-          {isLogin && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Login as
-              </label>
-              <div className="grid grid-cols-3 gap-2">
-                <button
-                  type="button"
-                  onClick={() => setFormData({...formData, role: 'student'})}
-                  className={`p-3 rounded-lg border-2 transition-colors ${
-                    formData.role === 'student'
-                      ? 'border-orange-600 bg-orange-50 text-orange-700'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <Users className="w-4 h-4 mx-auto mb-1" />
-                  <div className="text-xs font-medium">Student</div>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFormData({...formData, role: 'admin'})}
-                  className={`p-3 rounded-lg border-2 transition-colors ${
-                    formData.role === 'admin'
-                      ? 'border-orange-600 bg-orange-50 text-orange-700'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <Building2 className="w-4 h-4 mx-auto mb-1" />
-                  <div className="text-xs font-medium">Admin</div>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFormData({...formData, role: 'super_admin'})}
-                  className={`p-3 rounded-lg border-2 transition-colors ${
-                    formData.role === 'super_admin'
-                      ? 'border-orange-600 bg-orange-50 text-orange-700'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <Shield className="w-4 h-4 mx-auto mb-1" />
-                  <div className="text-xs font-medium">Super</div>
-                </button>
-              </div>
+          {/* Role Selection */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Login as
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => setFormData({...formData, role: 'student'})}
+                className={`p-3 rounded-lg border-2 transition-colors ${
+                  formData.role === 'student'
+                    ? 'border-orange-600 bg-orange-50 text-orange-700'
+                    : 'border-gray-200 hover:border-gray-300'
+                }`}
+              >
+                <Users className="w-4 h-4 mx-auto mb-1" />
+                <div className="text-xs font-medium">Student</div>
+              </button>
+              <button
+                type="button"
+                onClick={() => setFormData({...formData, role: 'admin'})}
+                className={`p-3 rounded-lg border-2 transition-colors ${
+                  formData.role === 'admin'
+                    ? 'border-orange-600 bg-orange-50 text-orange-700'
+                    : 'border-gray-200 hover:border-gray-300'
+                }`}
+              >
+                <Building2 className="w-4 h-4 mx-auto mb-1" />
+                <div className="text-xs font-medium">Admin</div>
+              </button>
             </div>
-          )}
+          </div>
 
           {/* Email */}
           <div>
@@ -144,38 +129,6 @@ export const LoginScreen: React.FC = () => {
             />
           </div>
 
-          {/* Registration Fields */}
-          {!isLogin && (
-            <>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.fullName}
-                  onChange={(e) => setFormData({...formData, fullName: e.target.value})}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  placeholder="Your full name"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  College Name
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.collegeName}
-                  onChange={(e) => setFormData({...formData, collegeName: e.target.value})}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  placeholder="Your college/university"
-                />
-              </div>
-            </>
-          )}
-
           {/* Submit Button */}
           <button
             type="submit"
@@ -186,22 +139,11 @@ export const LoginScreen: React.FC = () => {
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
             ) : (
               <>
-                {isLogin ? <LogIn className="w-5 h-5" /> : <UserPlus className="w-5 h-5" />}
-                {isLogin ? 'Sign In' : 'Create Account'}
+                <LogIn className="w-5 h-5" />
+                Sign In
               </>
             )}
           </button>
-
-          {/* Toggle Mode */}
-          <div className="text-center">
-            <button
-              type="button"
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-orange-600 hover:text-orange-700 font-medium"
-            >
-              {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
-            </button>
-          </div>
         </form>
       </div>
     </div>

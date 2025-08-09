@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User } from '../types';
 
@@ -43,7 +42,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (email: string, password: string, role: 'student' | 'admin' | 'super_admin'): Promise<boolean> => {
     try {
       // Special handling for super admin credentials
-      if (email === 'kayushant@gmail.com' && password === '1234567') {
+      if (email === 'admin@ed.com' && password === '232354') {
         // Send email notification
         await sendWelcomeEmail(email, 'super_admin');
         
@@ -65,7 +64,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         id: Math.random().toString(36).substr(2, 9),
         email,
         role,
-        full_name: role === 'admin' ? 'Admin User' : role === 'super_admin' ? 'Super Admin' : 'Student User',
+        full_name: role === 'admin' ? 'Admin User' : 'Student User',
         college_name: role === 'student' ? 'Demo College' : undefined
       };
       
